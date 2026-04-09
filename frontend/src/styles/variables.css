@@ -1,0 +1,39 @@
+/* ── Design Tokens ── */
+:root {
+  /* Backgrounds */
+  --bg:        #070b12;
+  --bg1:       #0d1320;
+  --bg2:       #111928;
+
+  /* Borders */
+  --border:    rgba(255, 255, 255, 0.07);
+
+  /* Accent — Cyan */
+  --cyan:      #00d4ff;
+  --cyan-dim:  rgba(0, 212, 255, 0.12);
+  --cyan-glow: rgba(0, 212, 255, 0.35);
+
+  /* Accent — Amber */
+  --amber:     #f5a623;
+  --amber-dim: rgba(245, 166, 35, 0.12);
+
+  /* Accent — Green */
+  --green:     #2dda93;
+  --green-dim: rgba(45, 218, 147, 0.12);
+
+  /* Accent — Red */
+  --red:       #ff4e6a;
+  --red-dim:   rgba(255, 78, 106, 0.12);
+
+  /* Accent — Purple */
+  --purple:    #9b7aff;
+
+  /* Text */
+  --text:      #e2e8f0;
+  --muted:     #6b7280;
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --font-body:    'Instrument Sans', sans-serif;
+}

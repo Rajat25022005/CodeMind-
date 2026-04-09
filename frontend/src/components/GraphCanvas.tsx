@@ -1,16 +1,28 @@
-/**
- * GraphCanvas.tsx
- * Interactive knowledge graph visualization using react-force-graph.
- * Renders the temporal knowledge graph with nodes for functions, modules,
- * and files, and edges carrying semantic relationships.
- */
+import GraphTabBar from './graph/GraphTabBar';
+import GraphToolbar from './graph/GraphToolbar';
+import GraphSVG from './graph/GraphSVG';
+import GraphLegend from './graph/GraphLegend';
+import NodeTooltip from './graph/NodeTooltip';
+import TimelineStrip from './graph/TimelineStrip';
+import './GraphCanvas.css';
 
+/**
+ * GraphCanvas
+ * Main graph visualization area composing the tab bar, SVG canvas,
+ * toolbar, legend, tooltip, and timeline overlays.
+ */
 const GraphCanvas = () => {
   return (
-    <div id="graph-canvas">
-      <h2>Knowledge Graph</h2>
-      <p>Interactive temporal graph visualization will render here.</p>
-    </div>
+    <>
+      <GraphTabBar />
+      <div className="graphArea" id="graph-canvas">
+        <GraphToolbar />
+        <GraphSVG />
+        <GraphLegend />
+        <NodeTooltip />
+        <TimelineStrip />
+      </div>
+    </>
   );
 };
 

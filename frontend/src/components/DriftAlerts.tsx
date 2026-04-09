@@ -1,15 +1,38 @@
-/**
- * DriftAlerts.tsx
- * Intent drift notification component.
- * Displays alerts when current code diverges from its documented
- * or originally committed intent.
- */
+import { mockDriftItems } from '../data/mockData';
+import './DriftAlerts.css';
 
-const DriftAlerts = () => {
+interface DriftAlertsProps {
+  onClose: () => void;
+}
+
+/**
+ * DriftAlerts
+ * Slide-in panel showing intent drift notifications.
+ * Positioned absolutely within the workspace area.
+ */
+const DriftAlerts = ({ onClose }: DriftAlertsProps) => {
   return (
-    <div id="drift-alerts">
-      <h2>Drift Alerts</h2>
-      <p>Code-intent drift notifications will appear here.</p>
+    <div className="driftPanel" id="drift-alerts">
+      <div className="dpHeader">
+        <div className="dpTitle">
+          ⚠ Intent Drift Alerts
+          <span className="dpTitleCount">{mockDriftItems.length} active</span>
+        </div>
+        <button className="dpClose" onClick={onClose} aria-label="Close drift panel">
+          ✕
+        </button>
+      </div>
+
+      {mockDriftItems.map((item, idx) => (
+        <div key={idx} className="driftItem">
+          <div className="diTop">
+            <div className="diFile">{item.file}</div>
+            <div className="diTime">{item.timeAgo}</div>
+          </div>
+          <div className="diMsg" dangerouslySetInnerHTML={{ __html: item.message }} />
+          <span className="diBadge">{item.severity}</span>
+        </div>
+      ))}
     </div>
   );
 };

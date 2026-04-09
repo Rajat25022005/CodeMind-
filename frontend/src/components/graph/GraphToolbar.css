@@ -1,0 +1,34 @@
+.graphToolbar {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  gap: 6px;
+  z-index: 4;
+}
+
+.gtBtn {
+  padding: 5px 11px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.gtBtn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.gtBtn.active {
+  color: var(--cyan);
+  border-color: rgba(0, 212, 255, 0.4);
+  background: var(--cyan-dim);
+}

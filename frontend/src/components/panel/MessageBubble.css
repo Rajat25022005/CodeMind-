@@ -1,0 +1,57 @@
+.msg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: appear 0.25s ease forwards;
+}
+
+.msgUser {
+  align-items: flex-end;
+}
+
+.msgBubble {
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  max-width: 92%;
+}
+
+.msgUser .msgBubble {
+  background: var(--cyan-dim);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  color: var(--cyan);
+  border-radius: 12px 12px 2px 12px;
+  font-family: var(--font-body);
+}
+
+.msgAi .msgBubble {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 12px 12px 12px 2px;
+  font-size: 12px;
+}
+
+.msgMeta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+.msgMetaRight {
+  text-align: right;
+}
+
+/* Streaming cursor */
+.streamCursor {
+  display: inline-block;
+  width: 7px;
+  height: 12px;
+  background: var(--cyan);
+  border-radius: 1px;
+  animation: blink 1s infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}

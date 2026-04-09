@@ -1,0 +1,65 @@
+.rpInputArea {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.rpInputWrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 8px 8px 13px;
+  transition: border-color 0.2s;
+}
+
+.rpInputWrap:focus-within {
+  border-color: rgba(0, 212, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.06);
+}
+
+.rpTextarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  resize: none;
+  line-height: 1.5;
+  max-height: 80px;
+}
+
+.rpTextarea::placeholder {
+  color: var(--muted);
+}
+
+.rpSend {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--cyan);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+  font-size: 13px;
+  color: #000;
+}
+
+.rpSend:hover {
+  opacity: 0.85;
+}
+
+.rpHint {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 7px;
+  text-align: center;
+}

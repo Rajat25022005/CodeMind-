@@ -1,0 +1,30 @@
+.traceBar {
+  margin-top: 6px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.traceStep {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.traceStep.done {
+  color: var(--green);
+  border-color: rgba(45, 218, 147, 0.25);
+  background: var(--green-dim);
+}
+
+.traceArrow {
+  color: var(--muted);
+  font-size: 8px;
+}

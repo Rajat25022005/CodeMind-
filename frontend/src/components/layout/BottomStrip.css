@@ -1,0 +1,50 @@
+.bottomStrip {
+  height: 38px;
+  border-top: 1px solid var(--border);
+  background: var(--bg1);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.bsItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bsItem::after {
+  content: '·';
+  margin-left: 8px;
+  color: var(--border);
+}
+
+.bsItem:last-child::after {
+  display: none;
+}
+
+.bsHighlight {
+  color: var(--text);
+}
+
+.bsDrift {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--amber);
+}
+
+.bsDriftDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: blink 2s infinite;
+}

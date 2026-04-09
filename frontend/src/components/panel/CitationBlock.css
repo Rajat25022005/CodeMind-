@@ -1,0 +1,26 @@
+.citation {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(155, 122, 255, 0.08);
+  border: 1px solid rgba(155, 122, 255, 0.2);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--purple);
+}
+
+.citationRow {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  margin-bottom: 2px;
+}
+
+.citationBadge {
+  padding: 1px 6px;
+  background: rgba(155, 122, 255, 0.2);
+  border-radius: 3px;
+  font-size: 9px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
