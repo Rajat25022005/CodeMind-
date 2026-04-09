@@ -3,7 +3,8 @@
 > **AI-native codebase memory engine.** Understands *why* your code is the way it is — not just what it does.
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue?style=flat-square&logo=python)](https://python.org)
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite)](https://vite.dev)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Neo4j](https://img.shields.io/badge/Neo4j-Graph_DB-008CC1?style=flat-square&logo=neo4j)](https://neo4j.com)
 [![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-black?style=flat-square)](https://ollama.ai)
@@ -61,7 +62,7 @@ Built on Ollama. All reasoning, embedding, and graph construction happens on-dev
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                   Next.js Frontend               │
+│              React + Vite Frontend               │
 │   Graph Canvas (react-force-graph)  │  Q&A UI   │
 │   Timeline View  │  Diff Viewer  │  Drift Alerts │
 └────────────────────────┬────────────────────────┘
@@ -98,7 +99,7 @@ Built on Ollama. All reasoning, embedding, and graph construction happens on-dev
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 14, TypeScript, TailwindCSS, react-force-graph |
+| Frontend | React 19, TypeScript, TailwindCSS, Vite, React Router, react-force-graph |
 | Backend | FastAPI, Python 3.11 |
 | Agent Orchestration | LangGraph |
 | LLM (Local) | Ollama (Llama 3 / Mistral / Gemma) |
@@ -158,7 +159,7 @@ The ingestion pipeline will:
 4. Populate Neo4j with the temporal graph
 5. Embed all chunks into Qdrant
 
-Then open `http://localhost:3000` to explore the graph.
+Then open `http://localhost:5173` to explore the graph.
 
 ---
 
@@ -166,13 +167,18 @@ Then open `http://localhost:3000` to explore the graph.
 
 ```
 codemind/
-├── frontend/                  # Next.js application
-│   ├── components/
-│   │   ├── GraphCanvas.tsx    # react-force-graph visualization
-│   │   ├── QueryPanel.tsx     # Q&A interface with streaming
-│   │   ├── DriftAlerts.tsx    # Intent drift notifications
-│   │   └── DiffViewer.tsx     # Commit diff display
-│   └── pages/
+├── frontend/                  # React + Vite application
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── GraphCanvas.tsx    # react-force-graph visualization
+│   │   │   ├── QueryPanel.tsx     # Q&A interface with streaming
+│   │   │   ├── DriftAlerts.tsx    # Intent drift notifications
+│   │   │   └── DiffViewer.tsx     # Commit diff display
+│   │   ├── pages/
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── index.html
+│   └── vite.config.ts
 │
 ├── backend/
 │   ├── agents/
