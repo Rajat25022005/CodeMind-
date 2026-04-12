@@ -54,7 +54,8 @@ class LLMClient:
 
     @property
     def available(self) -> bool:
-        return self._available
+        settings = get_settings()
+        return self._available or bool(settings.openai_api_key) or bool(settings.gemini_api_key)
 
     # ── Text Generation ──
 
@@ -134,7 +135,7 @@ class LLMClient:
         full_prompt = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
 
         resp = await self._http.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+            f"https://generativelanguage.googleapis.com/v1beta/models/{settings.gemini_model}:generateContent",
             headers={"x-goog-api-key": settings.gemini_api_key},
             json={"contents": [{"parts": [{"text": full_prompt}]}]},
         )
@@ -193,6 +194,9 @@ class LLMClient:
         if settings.openai_api_key:
             return await self._embed_openai(text)
 
+        if settings.gemini_api_key:
+            return await self._embed_gemini(text)
+
         raise RuntimeError("No embedding backend available")
 
     async def _embed_ollama(self, text: str, model: str) -> list[float]:
@@ -221,3 +225,17 @@ class LLMClient:
         )
         resp.raise_for_status()
         return resp.json()["data"][0]["embedding"]
+
+    async def _embed_gemini(self, text: str) -> list[float]:
+        """Embed via Google Gemini API."""
+        settings = get_settings()
+        resp = await self._http.post(
+            "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent",
+            headers={"x-goog-api-key": settings.gemini_api_key},
+            json={
+                "model": "models/text-embedding-004",
+                "content": {"parts": [{"text": text}]}
+            },
+        )
+        resp.raise_for_status()
+        return resp.json()["embedding"]["values"]

@@ -2,13 +2,11 @@
 Security utilities: Password hashing, JWT token generation, and FastAPI auth dependencies.
 """
 from datetime import datetime, timedelta, timezone
-from passlib.context import CryptContext
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import os
 
-PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Use a secure secret key from environment. Fails securely if missing.
 SECRET_KEY = os.getenv("SECRET_KEY", "")
@@ -20,14 +18,21 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60  # 1 hour
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
+import bcrypt
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plain password against its hashed version."""
-    return PWD_CONTEXT.verify(plain_password, hashed_password)
+    password_byte_enc = plain_password.encode('utf-8')
+    hashed_password_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_byte_enc, hashed_password_bytes)
 
 
 def get_password_hash(password: str) -> str:
     """Hash a plaintext password using bcrypt."""
-    return PWD_CONTEXT.hash(password)
+    pwd_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(pwd_bytes, salt)
+    return hashed_password.decode('utf-8')
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:

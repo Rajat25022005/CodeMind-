@@ -2,11 +2,11 @@
 Agents package — ingestion, graph building, retrieval, reasoning, and synthesis.
 """
 
-from agents.ingestion import IngestionAgent
-from agents.graph_builder import GraphBuilderAgent
-from agents.retrieval import RetrievalAgent
-from agents.reasoning import ReasoningAgent
-from agents.synthesis import SynthesisAgent
+from .ingestion import IngestionAgent
+from .graph_builder import GraphBuilderAgent
+from .retrieval import RetrievalAgent
+from .reasoning import ReasoningAgent
+from .synthesis import SynthesisAgent
 
 __all__ = [
     "IngestionAgent",

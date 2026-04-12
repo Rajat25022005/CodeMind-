@@ -81,5 +81,6 @@ class AuthService:
             )
 
         # Generate JWT
-        token = create_access_token(data={"sub": user["id"], "email": user["email"]})
+        user_id = user.get("id", user["email"])
+        token = create_access_token(data={"sub": user_id, "email": user["email"]})
         return token

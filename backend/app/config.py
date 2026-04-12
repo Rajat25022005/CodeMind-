@@ -29,12 +29,13 @@ class Settings(BaseSettings):
 
     # ── Ollama ──
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "llama3"
+    ollama_model: str = ""
     ollama_embed_model: str = "nomic-embed-text"
 
     # ── Cloud LLM fallback (optional) ──
     openai_api_key: str = ""
     gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.0-flash"
 
     # ── Application ──
     debug: bool = False
