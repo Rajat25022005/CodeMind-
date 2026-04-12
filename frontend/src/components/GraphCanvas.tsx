@@ -10,11 +10,6 @@ import TimelineStrip from './graph/TimelineStrip';
 import ErrorBoundary from './ErrorBoundary';
 import './GraphCanvas.css';
 
-/**
- * GraphCanvas
- * Main graph visualization area composing the tab bar, Canvas Graph,
- * toolbar, legend, tooltip, timeline overlays, and ingestion progress.
- */
 const GraphCanvas = () => {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const toggleNodeSelection = useGraphStore((s) => s.toggleNodeSelection);

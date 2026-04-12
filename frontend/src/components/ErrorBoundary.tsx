@@ -10,10 +10,6 @@ interface State {
   error: Error | null;
 }
 
-/**
- * ErrorBoundary — catches render errors in child tree and shows a fallback UI
- * instead of crashing the entire app.
- */
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);

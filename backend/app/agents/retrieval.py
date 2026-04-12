@@ -1,12 +1,3 @@
-"""
-Retrieval Agent
-
-Hybrid vector + graph search for answering queries.
-Combines Qdrant vector similarity search with Neo4j graph traversal
-to find the most relevant context for a user's question.
-Uses reciprocal rank fusion to merge results from both sources.
-"""
-
 from __future__ import annotations
 
 import logging
@@ -23,8 +14,6 @@ _CODE_IDENTIFIER_RE = re.compile(r"\b[a-z_]\w+(?:\.\w+)*\b")
 
 
 class RetrievalAgent:
-    """Performs hybrid retrieval across vector store and knowledge graph."""
-
     __slots__ = ("graph_db", "vector_db", "llm")
 
     def __init__(
@@ -38,12 +27,6 @@ class RetrievalAgent:
         self.llm = llm
 
     async def retrieve(self, query: str, top_k: int = 10) -> list[dict]:
-        """
-        Execute hybrid retrieval:
-        1. Embed query and search Qdrant for similar chunks
-        2. Extract entity names from query → traverse Neo4j for related nodes
-        3. Re-rank and merge results via reciprocal rank fusion
-        """
         logger.info("Retrieval for: '%s' (top_k=%d)", query[:80], top_k)
 
         # Step 1: Vector search

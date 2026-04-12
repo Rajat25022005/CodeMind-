@@ -14,6 +14,7 @@ const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage'));
+const SetupPage = lazy(() => import('./pages/SetupPage'));
 
 const PageLoader = () => (
   <div style={{
@@ -38,6 +39,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify" element={<VerifyEmailPage />} />
+        <Route path="/setup" element={<ProtectedRoute><SetupPage /></ProtectedRoute>} />
         
         <Route element={<ProtectedRoute><WorkspaceLayout /></ProtectedRoute>}>
           <Route path="/" element={<GraphPage />} />

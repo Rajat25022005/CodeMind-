@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { fetchFiles } from '../lib/api';
-import { mockFiles } from '../data/repo.mock';
 import type { FileItem } from '../types';
 import './Pages.css';
 
@@ -38,11 +37,8 @@ function buildFileTree(flatFiles: any[]): FileItem[] {
   return Object.values(tree).sort((a, b) => a.path.localeCompare(b.path));
 }
 
-/**
- * FilesPage — Repository file tree explorer with metadata.
- */
 const FilesPage = () => {
-  const [fileDirs, setFileDirs] = useState<FileItem[]>(mockFiles);
+  const [fileDirs, setFileDirs] = useState<FileItem[]>([]);
 
   useEffect(() => {
     fetchFiles()
@@ -51,7 +47,7 @@ const FilesPage = () => {
           setFileDirs(buildFileTree(res.files));
         }
       })
-      .catch((err) => console.warn('Failed to fetch files, using mock:', err));
+      .catch((err) => console.warn('Failed to fetch files:', err));
   }, []);
 
   const totalFiles = fileDirs.reduce((acc, dir) => acc + (dir.children?.length || 0), 0);

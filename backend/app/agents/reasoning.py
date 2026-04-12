@@ -1,12 +1,3 @@
-"""
-Reasoning Agent
-
-LangGraph-powered multi-hop question answering.
-Takes retrieved context and performs multi-step reasoning
-to produce evidence-backed answers with full citations.
-Supports both synchronous and streaming modes.
-"""
-
 from __future__ import annotations
 
 import json
@@ -41,13 +32,10 @@ Return ONLY valid JSON array like: [{{"badge": "...", "text": "..."}}, ...]"""
 
 
 class ReasoningState(dict):
-    """State for the LangGraph reasoning workflow."""
     pass
 
 
 class ReasoningAgent:
-    """Multi-hop QA agent using LangGraph + Ollama."""
-
     __slots__ = ("llm", "_graph")
 
     def __init__(self, llm: LLMClient) -> None:

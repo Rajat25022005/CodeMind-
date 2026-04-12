@@ -1,7 +1,3 @@
-/**
- * UI store — drift panel, general UI state.
- * Uses Zustand for selector-based re-renders.
- */
 import { create } from 'zustand';
 
 interface UIState {

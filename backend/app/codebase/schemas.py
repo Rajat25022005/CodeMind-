@@ -182,4 +182,4 @@ class StatusResponse(BaseModel):
     model: str = ""
     avg_query_ms: float = 0
     drift_count: int = 0
-    indexed_repos: list[str] = []
+    active_repo: dict | None = None

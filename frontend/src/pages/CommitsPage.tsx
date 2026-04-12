@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 import { fetchCommits } from '../lib/api';
-import { mockCommits } from '../data/repo.mock';
 import type { CommitItem } from '../types';
 import './Pages.css';
 
-/**
- * CommitsPage — Scrollable commit history with graph node connections.
- */
 const CommitsPage = () => {
-  const [commits, setCommits] = useState<CommitItem[]>(mockCommits);
+  const [commits, setCommits] = useState<CommitItem[]>([]);
 
   useEffect(() => {
     fetchCommits()
@@ -22,7 +18,7 @@ const CommitsPage = () => {
           setCommits(mapped);
         }
       })
-      .catch((err) => console.warn('Failed to fetch commits, using mock:', err));
+      .catch((err) => console.warn('Failed to fetch commits:', err));
   }, []);
 
   return (

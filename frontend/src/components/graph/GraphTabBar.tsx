@@ -1,4 +1,4 @@
-import { graphTabs } from '../../data/repo.mock';
+import { graphTabs } from '../../lib/constants';
 import './GraphTabBar.css';
 
 interface GraphTabBarProps {

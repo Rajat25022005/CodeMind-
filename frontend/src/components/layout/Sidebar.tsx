@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUIStore } from '../../stores/uiStore';
-import { sidebarItems, sidebarSecondary } from '../../data/repo.mock';
-import { mockDriftItems } from '../../data/drift.mock';
+import { sidebarItems, sidebarSecondary } from '../../lib/constants';
+import { useRepoStore } from '../../stores/repoStore';
 import { useAuthStore } from '../../stores/authStore';
 import './Sidebar.css';
 
@@ -11,6 +11,7 @@ const Sidebar = () => {
   const location = useLocation();
   const toggleDrift = useUIStore((s) => s.toggleDrift);
   const logout = useAuthStore((s) => s.logout);
+  const driftCount = useRepoStore((s) => s.driftCount);
 
   const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
@@ -45,7 +46,7 @@ const Sidebar = () => {
       <div className="sbDivider" />
       <button className="sbAlert" title="Drift Alerts" onClick={toggleDrift}>
         ⚠
-        <span className="alertBadge">{mockDriftItems.length}</span>
+        {driftCount > 0 && <span className="alertBadge">{driftCount}</span>}
       </button>
       <div className="flex-1" />
       <button 

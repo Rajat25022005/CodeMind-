@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { postOnboard } from '../lib/api';
-import { mockOnboardingSteps } from '../data/repo.mock';
 import type { OnboardingStep } from '../types';
 import './Pages.css';
 
@@ -18,14 +17,9 @@ const typeIcons: Record<string, string> = {
   feature: '✚',
 };
 
-/**
- * OnboardingPage — Chronological story of how a module evolved.
- * Enter a module path to generate a walkthrough via the backend,
- * or view mock data when the API is unavailable.
- */
 const OnboardingPage = () => {
-  const [steps, setSteps] = useState<OnboardingStep[]>(mockOnboardingSteps);
-  const [modulePath, setModulePath] = useState('auth/middleware.py');
+  const [steps, setSteps] = useState<OnboardingStep[]>([]);
+  const [modulePath, setModulePath] = useState('');
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -49,17 +43,15 @@ const OnboardingPage = () => {
         }
       })
       .catch((err) => {
-        console.warn('Failed to fetch onboarding, using mock:', err);
-        setError('API unavailable — showing demo data');
+        console.warn('Failed to fetch onboarding:', err);
+        setError('Could not generate onboarding — check backend connection');
       })
       .finally(() => setLoading(false));
   };
 
-  // Load on mount
-  useEffect(() => {
-    loadOnboarding(modulePath);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Don't auto-load on mount — wait for user to enter a module path
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { /* noop */ }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

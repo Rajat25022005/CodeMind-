@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { fetchTimeline } from '../lib/api';
-import { mockFullTimeline } from '../data/timeline.mock';
 import type { FullTimelineEvent } from '../types';
 import './Pages.css';
 
@@ -14,12 +13,9 @@ const typeColors: Record<string, { color: string; bgColor: string }> = {
   release: { color: 'var(--cyan)', bgColor: 'var(--cyan-dim)' },
 };
 
-/**
- * TimelinePage — Full scrollable timeline of all events.
- */
 const TimelinePage = () => {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [events, setEvents] = useState<FullTimelineEvent[]>(mockFullTimeline);
+  const [events, setEvents] = useState<FullTimelineEvent[]>([]);
 
   useEffect(() => {
     fetchTimeline(100)
@@ -33,7 +29,7 @@ const TimelinePage = () => {
           setEvents(mapped);
         }
       })
-      .catch((err) => console.warn('Failed to fetch timeline, using mock:', err));
+      .catch((err) => console.warn('Failed to fetch timeline:', err));
   }, []);
 
   const filtered = activeFilter === 'All'

@@ -1,28 +1,33 @@
 import { useState, useEffect, useCallback } from 'react';
-import { mockStats } from '../../data/repo.mock';
 import { fetchStatus } from '../../lib/api';
+import { useRepoStore } from '../../stores/repoStore';
 import type { StatusStats } from '../../types';
 import './BottomStrip.css';
 
 const POLL_INTERVAL_MS = 60_000; // Refresh status every 60 seconds
 
 const BottomStrip = () => {
-  const [stats, setStats] = useState<StatusStats>(mockStats);
+  const [stats, setStats] = useState<StatusStats>({
+    nodes: 0, edges: 0, commits: 0, model: '—', avgQuery: '—', driftCount: 0,
+  });
+  const setDriftCount = useRepoStore((s) => s.setDriftCount);
 
   const refreshStatus = useCallback(() => {
     fetchStatus()
       .then((res) => {
+        const drift = res.drift_count ?? 0;
         setStats({
           nodes: res.nodes ?? 0,
           edges: res.edges ?? 0,
           commits: res.commits ?? 0,
           model: res.model || 'unknown',
           avgQuery: `${Math.round(res.avg_query_ms || 0)}ms`,
-          driftCount: res.drift_count ?? 0,
+          driftCount: drift,
         });
+        setDriftCount(drift);
       })
-      .catch((err) => console.warn('Failed to fetch status, using mock:', err));
-  }, []);
+      .catch((err) => console.warn('Failed to fetch status:', err));
+  }, [setDriftCount]);
 
   useEffect(() => {
     refreshStatus();

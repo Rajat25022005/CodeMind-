@@ -3,11 +3,6 @@ import MessageBubble from './panel/MessageBubble';
 import QueryInput from './panel/QueryInput';
 import './QueryPanel.css';
 
-/**
- * QueryPanel
- * Right panel "Decision Trail" Q&A interface with message history,
- * citations, reasoning traces, and live message sending.
- */
 const QueryPanel = () => {
   const { messages, isStreaming, sendQuery, clear } = useQueryStream();
 

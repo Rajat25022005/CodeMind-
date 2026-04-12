@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { fetchGraph } from '../../lib/api';
-import { nodeColors, edgeColors, graphNodes as mockGraphNodes, graphEdges as mockGraphEdges } from '../../data/graph.mock';
+import { nodeColors, edgeColors } from '../../lib/colors';
+import { useGraphStore } from '../../stores/graphStore';
 
 interface ForceGraphVisualizerProps {
   activeNodeId: string | null;
@@ -9,7 +10,7 @@ interface ForceGraphVisualizerProps {
 }
 
 export default function ForceGraphVisualizer({ activeNodeId, onNodeClick }: ForceGraphVisualizerProps) {
-  const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({ nodes: [], links: [] });
+  const { graphData, setGraphData } = useGraphStore();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const resizeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -27,16 +28,9 @@ export default function ForceGraphVisualizer({ activeNodeId, onNodeClick }: Forc
         }
       })
       .catch((err) => {
-        console.warn('Failed to fetch graph:', err);
-        // Fallback to mock data if API is down
-        const formattedMockLinks = mockGraphEdges.map((e: any) => ({
-            ...e,
-            source: e.from,
-            target: e.to,
-        }));
-        setGraphData({ nodes: mockGraphNodes, links: formattedMockLinks });
+        console.warn('Failed to fetch graph from backend:', err);
       });
-  }, []);
+  }, [setGraphData]);
 
   // Debounced resize handler — avoids firing on every pixel
   useEffect(() => {

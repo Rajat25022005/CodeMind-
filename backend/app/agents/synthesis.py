@@ -1,16 +1,8 @@
-"""
-Synthesis Agent
-
-Summary + onboarding narrative generator + drift detection.
-Produces chronological stories of how code modules evolved,
-tailored for onboarding new team members or generating summaries.
-Also detects when current code diverges from documented intent.
-"""
-
 from __future__ import annotations
 
 import json
 import logging
+import re
 
 from app.core.graph_db import GraphDB
 from app.core.llm import LLMClient
@@ -40,8 +32,6 @@ Return a JSON array of drift alerts."""
 
 
 class SynthesisAgent:
-    """Generates summaries, onboarding narratives, and drift alerts from graph data."""
-
     __slots__ = ("graph_db", "llm")
 
     def __init__(self, graph_db: GraphDB, llm: LLMClient) -> None:
@@ -49,12 +39,6 @@ class SynthesisAgent:
         self.llm = llm
 
     async def summarize(self, module_path: str) -> dict:
-        """
-        Generate a chronological evolution summary for a module:
-        1. Retrieve full history from the temporal graph
-        2. Order events chronologically
-        3. Generate a narrative via LLM
-        """
         logger.info("Generating summary for: %s", module_path)
 
         history = await self._get_module_history(module_path)
@@ -95,12 +79,6 @@ class SynthesisAgent:
         }
 
     async def onboard(self, module_path: str) -> OnboardingResponse:
-        """
-        Generate an onboarding walkthrough:
-        1. Identify key architectural decisions
-        2. Build a guided story of how the module evolved
-        3. Highlight important design rationale
-        """
         logger.info("Generating onboarding for: %s", module_path)
 
         history = await self._get_module_history(module_path)
@@ -122,7 +100,19 @@ class SynthesisAgent:
 
         try:
             raw = await self.llm.generate(prompt, system_prompt=ONBOARDING_SYSTEM)
-            steps_data = json.loads(raw.strip())
+            # Remove markdown formatting if present
+            raw = raw.strip()
+            if raw.startswith("```json"):
+                raw = raw[7:]
+            elif raw.startswith("```"):
+                raw = raw[3:]
+            if raw.endswith("```"):
+                raw = raw[:-3]
+            
+            # fallback regex search to find json array
+            match = re.search(r'\[.*\]', raw, re.DOTALL)
+            json_str = match.group(0) if match else raw.strip()
+            steps_data = json.loads(json_str)
             steps = [
                 OnboardingStep(
                     date=s.get("date", ""),
@@ -142,10 +132,6 @@ class SynthesisAgent:
         return OnboardingResponse(module=module_path, summary=summary, steps=steps)
 
     async def detect_drift(self, module_path: str | None = None) -> list[DriftAlert]:
-        """
-        Compare current code state against documented intent.
-        If module_path is None, scans all modules.
-        """
         logger.info("Running drift detection for: %s", module_path or "all modules")
 
         # Get recent commits with their documented intent
@@ -192,7 +178,19 @@ class SynthesisAgent:
 
         try:
             raw = await self.llm.generate(prompt, system_prompt=DRIFT_SYSTEM)
-            alerts_data = json.loads(raw.strip())
+            # Remove markdown formatting if present
+            raw = raw.strip()
+            if raw.startswith("```json"):
+                raw = raw[7:]
+            elif raw.startswith("```"):
+                raw = raw[3:]
+            if raw.endswith("```"):
+                raw = raw[:-3]
+                
+            # fallback regex search to find json array
+            match = re.search(r'\[.*\]', raw, re.DOTALL)
+            json_str = match.group(0) if match else raw.strip()
+            alerts_data = json.loads(json_str)
             alerts = [
                 DriftAlert(
                     file=a.get("file", ""),
@@ -209,7 +207,6 @@ class SynthesisAgent:
         return alerts
 
     async def _get_module_history(self, module_path: str) -> list[dict]:
-        """Get the full temporal history of a module from the graph."""
         # Search for the file node
         file_query = (
             "MATCH (f:Entity) WHERE f.label CONTAINS $path "
@@ -231,7 +228,6 @@ class SynthesisAgent:
 
     @staticmethod
     def _format_history(history: list[dict]) -> str:
-        """Format history records into a readable string for LLM."""
         parts = []
         for h in history:
             parts.append(

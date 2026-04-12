@@ -1,16 +1,6 @@
-/**
- * useQueryStream — hook for streaming Q&A via WebSocket.
- *
- * Connects to /ws/query and sends { question, top_k } messages.
- * Receives streamed tokens, trace steps, and a done signal.
- *
- * Falls back to mock data when the WebSocket is unavailable
- * so the UI remains functional during development without
- * a running backend.
- */
+
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { mockMessages, mockAIResponses } from '../data/messages.mock';
 import type { Message, TraceStep } from '../types';
 
 interface QueryStreamReturn {
@@ -27,13 +17,12 @@ function getWsUrl(): string {
 }
 
 export function useQueryStream(initialMessages?: Message[]): QueryStreamReturn {
-  const [messages, setMessages] = useState<Message[]>(initialMessages ?? mockMessages);
+  const [messages, setMessages] = useState<Message[]>(initialMessages ?? []);
   const [isStreaming, setIsStreaming] = useState(false);
   const [connected, setConnected] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const mockTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const streamingMsgId = useRef<string | null>(null);
 
   // ── Server → Client message handler ──
@@ -152,7 +141,6 @@ export function useQueryStream(initialMessages?: Message[]): QueryStreamReturn {
     connect();
     return () => {
       if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
-      if (mockTimer.current) clearTimeout(mockTimer.current);
       wsRef.current?.close();
     };
   }, [connect]);
@@ -186,38 +174,24 @@ export function useQueryStream(initialMessages?: Message[]): QueryStreamReturn {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify({ question: text, top_k: 10 }));
     } else {
-      // ── Mock fallback ──
-      console.info('[WS] Not connected — using mock response');
-      mockTimer.current = setTimeout(() => {
-        const aiContent = mockAIResponses[Math.floor(Math.random() * mockAIResponses.length)];
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last?.id === aiId) {
-            return [
-              ...prev.slice(0, -1),
-              {
-                ...last,
-                content: aiContent,
-                isStreaming: false,
-                hops: Math.floor(Math.random() * 4) + 1,
-                traceSteps: [
-                  { label: 'Graph walk', done: true },
-                  { label: 'Retrieval', done: true },
-                  { label: 'Synthesize', done: true },
-                ],
-              },
-            ];
-          }
-          return prev;
-        });
-        streamingMsgId.current = null;
-        setIsStreaming(false);
-      }, 1000 + Math.random() * 800);
+      // WebSocket not connected — show error in chat
+      const aiId = `msg-${Date.now()}-ai`;
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: aiId,
+          role: 'ai' as const,
+          content: '⚠ Not connected to backend. Please ensure the server is running.',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isStreaming: false,
+        },
+      ]);
+      streamingMsgId.current = null;
+      setIsStreaming(false);
     }
   }, []);
 
   const clear = useCallback(() => {
-    if (mockTimer.current) clearTimeout(mockTimer.current);
     streamingMsgId.current = null;
     setMessages([]);
     setIsStreaming(false);

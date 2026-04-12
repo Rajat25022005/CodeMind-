@@ -1,75 +1,71 @@
-import { useRef, useEffect, useState } from 'react';
-import { nodeTooltipData, graphNodes } from '../../data/graph.mock';
+import { useGraphStore } from '../../stores/graphStore';
 import './NodeTooltip.css';
 
 interface NodeTooltipProps {
   nodeId: string | null;
 }
 
-/**
- * NodeTooltip — Dynamically positioned tooltip that clamps to graph bounds
- * using getBoundingClientRect instead of hardcoded percentages.
- */
 const NodeTooltip = ({ nodeId }: NodeTooltipProps) => {
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState({ left: 0, top: 0 });
-
-  useEffect(() => {
-    if (!nodeId || !tooltipRef.current) return;
-
-    const node = graphNodes.find((n) => n.id === nodeId);
-    if (!node) return;
-
-    const parent = tooltipRef.current.parentElement;
-    if (!parent) return;
-
-    const parentRect = parent.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
-
-    // Calculate initial position (offset to the right of the node)
-    let left = node.x * parentRect.width + 20;
-    let top = node.y * parentRect.height - 40;
-
-    // Clamp right edge
-    if (left + tooltipRect.width > parentRect.width - 8) {
-      left = node.x * parentRect.width - tooltipRect.width - 20;
-    }
-    // Clamp left edge
-    if (left < 8) left = 8;
-    // Clamp bottom edge
-    if (top + tooltipRect.height > parentRect.height - 8) {
-      top = parentRect.height - tooltipRect.height - 8;
-    }
-    // Clamp top edge
-    if (top < 8) top = 8;
-
-    setPos({ left, top });
-  }, [nodeId]);
+  const { graphData } = useGraphStore();
 
   if (!nodeId) return null;
-  const data = nodeTooltipData[nodeId];
-  if (!data) return null;
+  const node = graphData.nodes.find((n: any) => n.id === nodeId);
+  if (!node) return null;
+
+  const type = node.type || 'module';
+  const label = node.label || 'Unknown';
+  const props = node.properties || {};
+
+  let icon = '⬡';
+  let subtitle = `${type.charAt(0).toUpperCase() + type.slice(1)}`;
+  if (type === 'commit') {
+    icon = '●';
+    subtitle = `Commit by ${props.author || 'Unknown'}`;
+  } else if (type === 'feature' || type === 'pr') {
+    icon = '⎇';
+  } else if (type === 'function' || type === 'class') {
+    icon = '⨍';
+  }
 
   return (
     <div
-      ref={tooltipRef}
       className="nodeTooltip"
-      style={{ left: `${pos.left}px`, top: `${pos.top}px` }}
+      style={{ bottom: '24px', right: '320px', position: 'absolute' }}
     >
       <div className="ntHeader">
-        <div className="ntIcon">{data.icon}</div>
+        <div className="ntIcon">{icon}</div>
         <div>
-          <div className="ntTitle">{data.title}</div>
-          <div className="ntSub">{data.subtitle}</div>
+          <div className="ntTitle">{label}</div>
+          <div className="ntSub">{subtitle}</div>
         </div>
       </div>
-      {data.rows.map((row) => (
-        <div key={row.label} className="ntRow">
-          <span>{row.label}</span>
-          <span className={row.highlight ? 'ntValHighlight' : 'ntVal'}>{row.value}</span>
+      
+      {props.message && (
+        <div className="ntRow">
+          <span style={{color: '#fff'}}>{props.message}</span>
         </div>
-      ))}
-      {data.driftTag && <span className="ntTag">{data.driftTag}</span>}
+      )}
+
+      {props.language && (
+        <div className="ntRow">
+          <span>Language</span>
+          <span className="ntVal">{props.language}</span>
+        </div>
+      )}
+
+      {props.lines !== undefined && props.lines > 0 && (
+        <div className="ntRow">
+          <span>Lines</span>
+          <span className="ntVal">{props.lines}</span>
+        </div>
+      )}
+
+      {props.timestamp && (
+        <div className="ntRow">
+          <span>Date</span>
+          <span className="ntVal">{new Date(props.timestamp).toLocaleDateString()}</span>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,12 +1,3 @@
-"""
-Graph Builder Agent
-
-Entity extraction → Neo4j graph construction.
-Takes ingested chunks from the IngestionAgent, extracts entities and
-semantic relationships via LLM, and populates the temporal knowledge graph.
-Simultaneously embeds chunks into Qdrant for vector search.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -40,8 +31,6 @@ _JSON_RE = re.compile(r'\{.*\}', re.DOTALL)
 
 
 class GraphBuilderAgent:
-    """Builds and maintains the temporal knowledge graph in Neo4j."""
-
     __slots__ = ("graph_db", "vector_db", "llm")
 
     def __init__(
@@ -55,13 +44,6 @@ class GraphBuilderAgent:
         self.llm = llm
 
     async def build_graph(self, chunks: list[ChunkRecord]) -> dict:
-        """
-        Process ingested chunks to:
-        1. Create nodes for commits, files, and code entities
-        2. Extract relationships via LLM for semantic edges
-        3. Embed all chunks into Qdrant for vector search
-        4. Return stats on what was created
-        """
         logger.info("Building graph from %d chunks", len(chunks))
 
         nodes_created = 0
@@ -117,7 +99,6 @@ class GraphBuilderAgent:
         }
 
     def _collect_commit_chunk(self, chunk: ChunkRecord, node_batch: list) -> None:
-        """Collect a commit node for bulk graph insertion."""
         node_batch.append({
             "id": chunk.id,
             "label": chunk.commit_hash[:7],
@@ -131,7 +112,6 @@ class GraphBuilderAgent:
         })
 
     def _collect_code_chunk(self, chunk: ChunkRecord, node_batch: list, edge_batch: list) -> None:
-        """Collect file and entity nodes/edges from a code chunk for bulk insertion."""
         # File node
         if chunk.source_file:
             file_id = f"file_{chunk.source_file.replace('/', '_').replace('.', '_')}"
@@ -179,7 +159,6 @@ class GraphBuilderAgent:
                 })
 
     def _collect_diff_chunk(self, chunk: ChunkRecord, node_batch: list, edge_batch: list) -> None:
-        """Collect edges linking commits to the files they modified for bulk insertion."""
         if chunk.commit_hash and chunk.source_file:
             commit_id = f"commit_{chunk.commit_hash[:7]}"
             file_id = f"file_{chunk.source_file.replace('/', '_').replace('.', '_')}"
@@ -203,7 +182,6 @@ class GraphBuilderAgent:
             })
 
     async def _extract_relationships(self, chunk: ChunkRecord) -> list:
-        """Use LLM to extract semantic relationships from a code chunk."""
         prompt = f"""Analyze this code chunk and extract entities and relationships:
 
 File: {chunk.source_file}
@@ -250,10 +228,10 @@ Content:
         return rel_batch
 
     async def _embed_chunks(self, chunks: list[ChunkRecord]) -> int:
-        """Embed all chunks and upsert into Qdrant in parallel."""
         sem = asyncio.Semaphore(10)  # Max 10 concurrent embeddings
         
         async def embed_one(chunk: ChunkRecord):
+            import uuid
             async with sem:
                 try:
                     if not chunk.content.strip():
@@ -266,8 +244,10 @@ Content:
                         "chunk_type": chunk.chunk_type,
                         "author": chunk.author,
                         "timestamp": chunk.timestamp,
+                        "original_id": chunk.id,
                     }
-                    return {"id": chunk.id, "vector": vector, "payload": payload}
+                    point_id = str(uuid.uuid5(uuid.NAMESPACE_OID, chunk.id))
+                    return {"id": point_id, "vector": vector, "payload": payload}
                 except Exception as e:
                     logger.error("Failed to embed chunk %s: %s", chunk.id, e)
                     return None

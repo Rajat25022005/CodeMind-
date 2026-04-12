@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { fetchDrift } from '../lib/api';
-import { mockDriftItems } from '../data/drift.mock';
 import type { DriftItem } from '../types';
 import './DriftAlerts.css';
 
@@ -9,28 +8,23 @@ interface DriftAlertsProps {
   onClose: () => void;
 }
 
-/**
- * DriftAlerts
- * Slide-in panel showing intent drift notifications.
- * Positioned absolutely within the workspace area.
- */
 const DriftAlerts = ({ onClose }: DriftAlertsProps) => {
-  const [driftItems, setDriftItems] = useState<DriftItem[]>(mockDriftItems);
+  const [driftItems, setDriftItems] = useState<DriftItem[]>([]);
 
   useEffect(() => {
     fetchDrift()
       .then((res) => {
-        if (res.alerts && res.alerts.length > 0) {
+        if (res.alerts) {
           const mapped = res.alerts.map((a: any) => ({
             file: a.file || '',
-            timeAgo: a.time_ago || a.timeAgo || '',
+            timeAgo: a.time_ago || a.timeAgo || 'recently',
             message: a.message || '',
             severity: a.severity || '',
           }));
           setDriftItems(mapped);
         }
       })
-      .catch((err) => console.warn('Failed to fetch drift alerts, using mock:', err));
+      .catch((err) => console.warn('Failed to fetch drift alerts:', err));
   }, []);
 
   return (

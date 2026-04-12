@@ -3,9 +3,6 @@ import MessageBubble from '../components/panel/MessageBubble';
 import QueryInput from '../components/panel/QueryInput';
 import './Pages.css';
 
-/**
- * DecisionTrailPage — Full-width Q&A view optimized for deep querying.
- */
 const DecisionTrailPage = () => {
   const { messages, isStreaming, sendQuery, clear } = useQueryStream();
 

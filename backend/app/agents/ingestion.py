@@ -1,12 +1,3 @@
-"""
-Ingestion Agent
-
-Walks a git repository's full commit history via GitPython,
-parses source files with Tree-sitter for AST-level entities,
-and produces structured chunks for downstream graph construction
-and vector embedding.
-"""
-
 from __future__ import annotations
 
 import hashlib
@@ -40,8 +31,6 @@ _SKIP_DIRS = frozenset(("node_modules", "vendor", "__pycache__", "dist", "build"
 
 
 class IngestionAgent:
-    """Processes a git repository into structured chunks for indexing."""
-
     __slots__ = ("repo_path", "repo")
 
     def __init__(self, repo_path: str) -> None:
@@ -49,14 +38,6 @@ class IngestionAgent:
         self.repo: Repo | None = None
 
     async def ingest(self, max_commits: int | None = None, branch: str = "main") -> dict:
-        """
-        Run the full ingestion pipeline:
-        1. Walk all commits and diffs via GitPython
-        2. Parse source files for function/class definitions
-        3. Chunk code + commit messages into structured records
-
-        Returns dict with status and lists of chunks produced.
-        """
         logger.info("Starting ingestion for %s (branch=%s)", self.repo_path, branch)
 
         self.repo_path = Path(self.repo_path).resolve()

@@ -1,14 +1,3 @@
-/**
- * useGraphUpdates — WebSocket hook for real-time graph update notifications.
- *
- * Connects to /ws/graph and listens for push events during ingestion:
- *   - ingestion_progress: { progress: 0-1, stage: string }
- *   - ingestion_complete: { repo_path, total_chunks }
- *   - ingestion_error: { error: string }
- *   - node_added / edge_added: live graph mutations
- *
- * Falls back gracefully when no backend is running.
- */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 

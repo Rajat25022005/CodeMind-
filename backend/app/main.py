@@ -1,15 +1,3 @@
-"""
-CodeMind Backend — Main Application Entry Point
-
-FastAPI application serving the CodeMind API.
-Provides REST endpoints and WebSocket connections for
-the temporal knowledge graph engine.
-
-Lifecycle:
-  - startup: connect to Neo4j, Qdrant, verify Ollama
-  - shutdown: close all connections
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -28,16 +16,9 @@ from app.codebase.router import set_clients as set_codebase_clients
 from app.codebase.websocket import router as ws_router
 from app.codebase.websocket import set_clients as set_ws_clients
 from app.auth.router import router as auth_router
-from app.auth.router import set_auth_clients
-
-# ── Logging ──
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-# ── Shared clients ──
 graph_db = GraphDB()
 vector_db = VectorDB()
 llm = LLMClient()
@@ -45,7 +26,6 @@ llm = LLMClient()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan — startup and shutdown hooks."""
     settings = get_settings()
 
     # Set log level from config (allows DEBUG in dev, WARNING in prod)
@@ -137,7 +117,6 @@ app.include_router(ws_router)
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint — returns live connection status for all services."""
     return {
         "status": "ok",
         "services": {

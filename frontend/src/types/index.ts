@@ -1,4 +1,4 @@
-/* ── CodeMind Type Definitions ── */
+
 
 export type NodeType = 'module' | 'func' | 'commit' | 'pr' | 'drift' | 'file';
 
@@ -83,7 +83,7 @@ export interface Tab {
   id: string;
 }
 
-/* ── New Page Types ── */
+
 
 export interface CommitItem {
   hash: string;
